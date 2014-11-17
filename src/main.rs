@@ -6,15 +6,15 @@ extern crate getopts;
 extern crate serialize;
 
 use std::os;
-use std::io;
+use std::io::stdio;
 use std::time::Duration;
 use getopts::{ optopt, optflag, getopts, usage, Matches };
 
-use timeedit::{ Course, Group };
-
 use config::Config;
+use print::Printer;
 
 mod config;
+mod print;
 
 fn main() {
     let args = os::args();
@@ -40,7 +40,7 @@ fn main() {
     } else if matches.opt_present("search") {
         Search
     } else {
-        Run
+        Schedule
     };
 
     let conf_file = match matches.opt_str("c") {
@@ -53,33 +53,27 @@ fn main() {
         Help => help(progname[], usage[]),
         Search => {
             let string = matches.opt_str("search").unwrap();
-            search(string[], conf);
+            search(string[], matches, conf);
         },
-        Run => run(matches, conf),
+        Schedule => schedule(matches, conf),
     }
 }
 
 enum Mode {
     Help,
     Search,
-    Run
+    Schedule
 }
 
-fn search(string: &str, conf: Config) {
+fn search(string: &str, matches: Matches, conf: Config) {
     println!("Searching for \"{}\"", string);
 
     let (types, typ) = timeedit::search(string, conf.base[]);
-    let t = match typ {
-        Course => "course",
-        Group => "group",
-    };
-    println!("Found {} {}{}", types.len(), t, if types.len() == 1 { "" } else { "s" });
-    for t in types.iter() {
-        println!("{}", t);
-    }
+    let printer = Printer::new(matches);
+    printer.print_search(types, typ);
 }
 
-fn run(matches: Matches, conf: Config) {
+fn schedule(matches: Matches, conf: Config) {
     let from = time::now();
     let to = time::at(from.to_timespec() + Duration::weeks(1));
 
@@ -94,13 +88,12 @@ fn run(matches: Matches, conf: Config) {
         }).collect();
     }
 
-    for event in events.iter() {
-        println!("{}", event);
-    }
+    let printer = Printer::new(matches);
+    printer.print_events(events);
 }
 
 fn help(progname: &str, usage: &str) {
     println!("Usage: {:s} [OPTION]", progname);
-    io::stdio::println(usage);
+    stdio::println(usage);
 }
 

@@ -41,7 +41,7 @@ mod tests {
 
     #[test]
     fn load_test() {
-        let _conf = Config::from_file("config_ex.json");
+        let _conf = Config::from_file("config.json");
     }
 
     #[test]
