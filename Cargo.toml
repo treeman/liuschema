@@ -1,0 +1,14 @@
+[package]
+
+name = "liuschema"
+version = "0.0.1"
+authors = ["Jonas Hietala <mail@jonashietala.se>"]
+
+[dependencies.timeedit]
+
+git = "https://github.com/treeman/libtimeedit"
+
+[dependencies.time]
+
+git = "https://github.com/rust-lang/time"
+
