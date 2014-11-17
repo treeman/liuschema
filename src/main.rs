@@ -24,6 +24,7 @@ fn main() {
         optflag("h", "help", "Display this help and exit"),
         optopt("", "search", "Search for a course/group", "TEXT"),
         optflag("", "today", "Limit schedule to today only"),
+        optflag("", "conky", "Pretty print for conky"),
     ];
 
     let matches = match getopts(args.tail(), opts) {
@@ -54,7 +55,7 @@ fn main() {
             let string = matches.opt_str("search").unwrap();
             search(string[], conf);
         },
-        Run => run(conf, matches),
+        Run => run(matches, conf),
     }
 }
 
@@ -78,23 +79,23 @@ fn search(string: &str, conf: Config) {
     }
 }
 
-fn run(conf: Config, matches: Matches) {
+fn run(matches: Matches, conf: Config) {
     let from = time::now();
     let to = time::at(from.to_timespec() + Duration::weeks(1));
 
-    let mut entries = timeedit::schedule_from_ids(conf.data_ids, from, to, conf.base[]);
+    let mut events = timeedit::schedule_from_ids(conf.data_ids, from, to, conf.base[]);
 
     // Filter out day by transforming to YYYY-MM-DD and discarding non-matches
     if matches.opt_present("today") {
         let date_format = "%F";
         let today = time::strftime(date_format, &from).unwrap();
-        entries = entries.into_iter().filter(|x| {
+        events = events.into_iter().filter(|x| {
             today == time::strftime(date_format, &x.start).unwrap()
         }).collect();
     }
 
-    for entry in entries.iter() {
-        println!("{}", entry);
+    for event in events.iter() {
+        println!("{}", event);
     }
 }
 
