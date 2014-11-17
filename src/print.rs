@@ -36,11 +36,12 @@ impl Printer {
 
     fn print_no_events(&self) {
         self.print_prefix();
+        println!("I'm free!");
     }
 
     fn print_prefix(&self) {
         if self.conky {
-            stdio::print("  \\${voffset 8}");
+            stdio::print("  ${voffset 8}");
         }
     }
 
