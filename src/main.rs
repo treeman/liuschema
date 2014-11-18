@@ -81,11 +81,7 @@ fn schedule(matches: Matches, conf: Config) {
 
     // Filter out day by transforming to YYYY-MM-DD and discarding non-matches
     if matches.opt_present("today") {
-        let date_format = "%F";
-        let today = time::strftime(date_format, &from).unwrap();
-        events = events.into_iter().filter(|x| {
-            today == time::strftime(date_format, &x.start).unwrap()
-        }).collect();
+        events = timeedit::filter_today(events);
     }
 
     let printer = Printer::new(matches);

@@ -27,9 +27,9 @@ impl Printer {
             self.print_prefix();
 
             if self.today {
-                println!("{}", event.fmt_time_only());
+                println!("{}", event.fmt_short());
             } else {
-                println!("{}", event);
+                println!("{}", event.fmt_pretty());
             }
         }
     }
