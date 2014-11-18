@@ -36,11 +36,11 @@ fn main() {
     let usage = usage("A simple cli for timeedit scheduling.", opts);
 
     let mode = if matches.opt_present("help") {
-        Help
+        Mode::Help
     } else if matches.opt_present("search") {
-        Search
+        Mode::Search
     } else {
-        Schedule
+        Mode::Schedule
     };
 
     let conf_file = match matches.opt_str("c") {
@@ -50,12 +50,12 @@ fn main() {
     let conf = Config::from_file(conf_file[]);
 
     match mode {
-        Help => help(progname[], usage[]),
-        Search => {
+        Mode::Help => help(progname[], usage[]),
+        Mode::Search => {
             let string = matches.opt_str("search").unwrap();
             search(string[], matches, conf);
         },
-        Schedule => schedule(matches, conf),
+        Mode::Schedule => schedule(matches, conf),
     }
 }
 
@@ -68,9 +68,9 @@ enum Mode {
 fn search(string: &str, matches: Matches, conf: Config) {
     println!("Searching for \"{}\"", string);
 
-    let (types, typ) = timeedit::search(string, conf.base[]);
+    let types = timeedit::multi_search(string, conf.base[]);
     let printer = Printer::new(matches);
-    printer.print_search(types, typ);
+    printer.print_search(types);
 }
 
 fn schedule(matches: Matches, conf: Config) {

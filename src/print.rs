@@ -1,7 +1,7 @@
 use std::io::stdio;
 use getopts::{ Matches };
 
-use timeedit::{ Event, Type, TypeInfo, Group, Course };
+use timeedit::{ Event, TypeInfo };
 
 #[deriving(Show)]
 pub struct Printer {
@@ -45,12 +45,8 @@ impl Printer {
         }
     }
 
-    pub fn print_search(&self, types: Vec<TypeInfo>, typ: Type) {
-        let t = match typ {
-            Course => "course",
-            Group => "group",
-        };
-        println!("Found {} {}{}", types.len(), t, if types.len() == 1 { "" } else { "s" });
+    pub fn print_search(&self, types: Vec<TypeInfo>) {
+        println!("Found {} matches:", types.len());
         for t in types.iter() {
             println!("{}", t);
         }
