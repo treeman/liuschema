@@ -27,13 +27,13 @@ fn main() {
         optflag("", "conky", "Pretty print for conky"),
     ];
 
-    let matches = match getopts(args.tail(), opts) {
+    let matches = match getopts(args.tail(), &opts) {
         Ok(m) => m,
         Err(e) => panic!("{}", e),
     };
 
     let progname = args[0].clone();
-    let usage = usage("A simple cli for timeedit scheduling.", opts);
+    let usage = usage("A simple cli for timeedit scheduling.", &opts);
 
     let mode = if matches.opt_present("help") {
         Mode::Help
@@ -89,7 +89,7 @@ fn schedule(matches: Matches, conf: Config) {
 }
 
 fn help(progname: &str, usage: &str) {
-    println!("Usage: {:s} [OPTION]", progname);
+    println!("Usage: {} [OPTION]", progname);
     stdio::println(usage);
 }
 
